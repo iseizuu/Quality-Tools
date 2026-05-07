@@ -11,11 +11,11 @@ public class ModConfig {
 
     public static Map<String, QualityConfig> defaultQualities() {
         Map<String, QualityConfig> map = new LinkedHashMap<>();
-        map.put("AWFUL",     new QualityConfig(0.7f,  10, 4.0f));
-        map.put("TRASH",     new QualityConfig(0.85f, 20, 2.5f));
-        map.put("FINE",      new QualityConfig(1.0f,  20, 1.0f));
-        map.put("GREAT",     new QualityConfig(1.15f, 7,  0.7f));
-        map.put("LEGENDARY", new QualityConfig(1.3f,  5,  0.5f));
+        map.put("AWFUL",     new QualityConfig(0.7f,  5, 4.0f));
+        map.put("TRASH",     new QualityConfig(0.85f, 12, 2.5f));
+        map.put("FINE",      new QualityConfig(1.0f,  30, 1.0f));
+        map.put("GREAT",     new QualityConfig(1.15f, 15,  0.7f));
+        map.put("LEGENDARY", new QualityConfig(1.3f,  8,  0.5f));
         map.put("MYTHIC",    new QualityConfig(1.6f,  2,  0.3f));
         return map;
     }

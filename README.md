@@ -1,64 +1,109 @@
-# 🛠️ QualityTools
+# Quality Tools
 
-**QualityTools** is a Fabric mod for Minecraft 1.21.11 that introduces a brand new **Reforge Table**. This mod allows players to reforge their tools and weapons to get better stats or qualities, perfect for enhancing the late-game survival experience on server.
+**Quality Tools** is a Fabric mod for Minecraft 1.21.11 that introduces a **weapon quality system** and a custom **Reforge Table** block. Every weapon you craft receives a random quality tier that permanently affects its damage and durability — making every craft feel meaningful.
 
-## ✨ Features
-* **Custom Reforge Table:** A brand new functional block with a custom UI.
-* **Material-Based Reforging:** Reforging requires specific materials (configurable).
-* **Server-Side Configuration:** Server admins can easily configure the required materials and costs using a JSON configuration file.
-* **Immersive Feedback:** Custom sound effects (Mob/Anvil sounds) and clean, formatted chat messages during the reforging process.
+> ⚠️ This mod must be installed on **both client and server**.
 
 ---
 
-## 📖 How to Get the Block
+## Features
 
-Players can craft the Reforge Table in survival mode using standard vanilla materials.
-
-### Crafting Recipe
-[IMAGE PLACEHOLDER]
-
-*(Alternatively, server admins can grant the block using: `/give @p qualitytools:reforge_table`)*
-
----
-
-## 🎮 How to Use
-
-1. **Place the Reforge Table:** Place the block anywhere in the world.
-2. **Open the UI:** Right-click the Reforge Table to open the custom reforging menu.
-3. **Insert the Tool:** Place the tool or weapon you want to reforge into the designated slot.
-4. **Prepare Materials:** Ensure you have enough of the required material in your inventory (e.g., Diamonds).
-5. **Click Reforge:** Click the Reforge button in the UI.
+- **Weapon Quality System** — Every weapon crafted automatically receives a random quality tier (AWFUL → MYTHIC), affecting damage and durability permanently.
+- **Custom Reforge Table** — A craftable block with a custom GUI to reforge existing weapons into a new random quality.
+- **Fully Configurable** — Server admins can tune every quality's damage multiplier, durability multiplier, weight (rarity), forge material, and forge cost via a JSON config file.
+- **Hot Reload** — Change config and reload in-game without restarting the server via `/qualitytools reload`.
+- **Broad Mod Compatibility** — Automatically supports any modded weapon that uses the standard `ATTACK_DAMAGE` attribute.
 
 ---
 
-## 🧮 How Stats are Calculated
+## Requirements
 
-When you craft weapon or looting from nowhere, this plugin will add random quality.
-
-* **Damage Calculation (`damageMultiplier`)**
-  The base attack damage of the weapon is multiplied by the quality's multiplier, then rounded to the nearest decimal point.
-    * **Formula:** `Final Damage = Math.round(Base Damage * damageMultiplier * 10.0) / 10.0`
-    * *Example:* A weapon with `7.0` base damage receiving the **MYTHIC** quality (`1.6x`) will be permanently modified to deal `11.2` damage per hit.
-
-* **Durability Calculation (`durabilityMultiplier`)**
-  Durability is dynamically intercepted every time the weapon takes damage. The logic splits based on whether the quality is a "buff" or a "debuff":
-
-  **1. Penalized Qualities (Multiplier >= 1.0):**
-  Qualities like **AWFUL (4.0x)** multiply the durability loss directly.
-    * **Formula:** Takes `Damage * durabilityMultiplier` per hit.
-    * *Example:* One hit will drain `4` durability points instead of `1`, breaking the weapon 4x faster.
-
-  **2. Buffed Qualities (Multiplier < 1.0):**
-  Qualities like **MYTHIC (0.3x)** use an RNG system similar to Minecraft's Vanilla *Unbreaking* enchantment. The multiplier becomes the **chance** to take 1 point of durability damage.
-    * **Formula:** `30% chance` to lose 1 durability, `70% chance` to ignore the damage completely.
-    * *Example:* A MYTHIC sword will absorb the vast majority of durability loss, making it last significantly longer than an ordinary sword!
+| Dependency | Version            |
+|---|--------------------|
+| Minecraft | 1.21.11            |
+| Fabric Loader | ≥ 0.19.2           |
+| Fabric API | Latest for 1.21.11 |
 
 ---
 
-## The JSON Configuration File
-When the mod runs, it generates (or reads) a configuration file. You can modify this to balance the economy and adjust the RNG (Random Number Generation) mechanics of your server.
+## Crafting the Reforge Table
 
-**Example Config Structure:**
+Craft the Reforge Table using the following recipe:
+
+<center>
+    <img src="https://i.ibb.co.com/LDLPwstx/crafting-recipe.png" alt="crafting-recipe" border="0">
+
+*(Alternatively: `/give @p qualitytools:reforge_table`)*
+</center>
+---
+
+## How to Use
+
+### Automatic Quality on Craft
+Simply craft any weapon — it will automatically receive a random quality tier based on the configured weights. The quality and its effects are permanently stored on the item itself.
+
+### Reforge Table
+1. Place the **Reforge Table** block.
+2. Right-click to open the reforging GUI.
+3. Insert the weapon you want to reforge into the slot.
+4. Make sure you have enough of the required forge material in your inventory (default: 3 Diamonds).
+5. Click **Reforge** — the weapon receives a brand new random quality.
+
+---
+
+## Quality Tiers
+
+Qualities are rolled using a weighted random system. Higher weight = more common.
+
+| Quality | Color | Damage Multiplier | Durability Multiplier | Weight (default) |
+|---|---|---|---|------------------|
+| AWFUL | Gray | 0.70x | 4.0x penalty | 5                |
+| TRASH | Red | 0.85x | 2.5x penalty | 12               |
+| FINE | Aqua | 1.00x | 1.0x (normal) | 30               |
+| GREAT | Green | 1.15x | 0.7x (better) | 15               |
+| LEGENDARY | Gold | 1.30x | 0.5x (much better) | 8                |
+| MYTHIC | Light Purple | 1.60x | 0.3x (RNG based) | 2                |
+
+> All values above are **defaults** and can be changed in the config file.
+
+---
+
+## How Stats Work
+
+### Damage
+The weapon's base attack damage is permanently scaled at the moment the quality is applied, then stored on the item.
+
+```
+Final Damage = Math.round(Base Damage × damageMultiplier × 10.0) / 10.0
+```
+
+**Example:** Diamond Sword (7.0 base) + MYTHIC (1.6x) = **11.2 damage**
+
+### Durability
+Durability is intercepted every time the weapon takes damage, split into two behaviors:
+
+**Penalized qualities** (`durabilityMultiplier >= 1.0`) — multiplies durability loss directly:
+```
+Durability lost = delta × durabilityMultiplier
+```
+*Example: AWFUL (4.0x) loses 4 durability per hit instead of 1.*
+
+**Buffed qualities** (`durabilityMultiplier < 1.0`) — uses RNG (like vanilla Unbreaking):
+```
+Chance to lose 1 durability = durabilityMultiplier
+```
+*Example: MYTHIC (0.3x) = 30% chance to lose 1 durability, 70% chance to ignore damage.*
+
+---
+
+## Configuration
+
+Config file is auto-generated at:
+```
+config/qualitytools.json
+```
+
+### Full Config Example
 ```json
 {
   "forgeMaterial": "minecraft:diamond",
@@ -66,27 +111,27 @@ When the mod runs, it generates (or reads) a configuration file. You can modify 
   "qualities": {
     "AWFUL": {
       "damageMultiplier": 0.7,
-      "weight": 10,
+      "weight": 5,
       "durabilityMultiplier": 4.0
     },
     "TRASH": {
       "damageMultiplier": 0.85,
-      "weight": 20,
+      "weight": 12,
       "durabilityMultiplier": 2.5
     },
     "FINE": {
       "damageMultiplier": 1.0,
-      "weight": 20,
+      "weight": 30,
       "durabilityMultiplier": 1.0
     },
     "GREAT": {
       "damageMultiplier": 1.15,
-      "weight": 7,
+      "weight": 15,
       "durabilityMultiplier": 0.7
     },
     "LEGENDARY": {
       "damageMultiplier": 1.3,
-      "weight": 5,
+      "weight": 8,
       "durabilityMultiplier": 0.5
     },
     "MYTHIC": {
@@ -97,19 +142,45 @@ When the mod runs, it generates (or reads) a configuration file. You can modify 
   }
 }
 ```
-*notes: renaming item quality isnt support for now, it will return error, example you want to rename `TRASH` to `BAD` its not recommended atleast for now*
+
+### Config Fields
+
+| Field | Description |
+|---|---|
+| `forgeMaterial` | Item required to reforge (any valid item ID) |
+| `forgeCost` | Amount of material consumed per reforge |
+| `damageMultiplier` | Multiplier applied to base weapon damage |
+| `durabilityMultiplier` | Multiplier applied to durability loss per hit |
+| `weight` | Rarity weight — higher = more common |
+
+> ⚠️ **Do not rename quality keys** (e.g. renaming `TRASH` to `BAD`) — the mod uses these names to map internal enum values. Renaming will cause errors.
 
 ---
 
-## 🤝 Compatibility & Limitations
+## Commands
 
-QualityTools is dynamically built to support not just Vanilla gear, but also custom weapons from other mods!
+All commands require **operator (OP) level** permission.
 
-**✅ Supported Items**
-The mod will automatically apply qualities to any item that utilizes the standard `ATTACK_DAMAGE` attribute. This includes:
-* Vanilla melee weapons (Swords, Axes, Tridents).
-* Custom modded melee weapons (e.g., Spears, Katanas, custom broadswords) from other mods.
+| Command | Description |
+|---|---|
+| `/qualitytools reload` | Reloads the config file and resets all weapon stats in every online player's inventory to reflect new values |
 
-**❌ Not Supported (Yet)**
-* **Ranged Weapons:** Bows and Crossbows will not receive qualities. In Minecraft, ranged weapons rely on projectile entity damage rather than standard item-based attack attributes.
-* **Armor & Non-Weapon Tools:** Currently, the reforging system specifically targets items functioning primarily as weapons.
+---
+
+## Compatibility
+
+### ✅ Supported
+- All vanilla melee weapons (Swords, Axes, Tridents, Mace)
+- Any modded weapon that uses the standard `ATTACK_DAMAGE` attribute modifier (e.g. spears, katanas, custom broadswords)
+
+### ❌ Not Supported
+- **Bows & Crossbows** — ranged weapons use projectile entity damage, not item attack attributes
+- **Armor & Tools** — quality system targets weapons only
+
+---
+
+## ⚠️ Important Notes
+
+- **World Safety** — If you remove the mod from an existing world, weapons keep their modified damage values (baked into the item). The quality NBT tag is simply ignored by vanilla. Your world will not break.
+- **Config Changes** — After editing the config, use `/qualitytools reload` to apply changes. This resets all weapon damage in online players' inventories so new multipliers take effect correctly.
+- **Quality is permanent** — Once a quality is assigned to a weapon, it stays on that item forever unless reforged.
