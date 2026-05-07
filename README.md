@@ -30,11 +30,10 @@
 
 Craft the Reforge Table using the following recipe:
 
-<center>
-    <img src="https://i.ibb.co.com/LDLPwstx/crafting-recipe.png" alt="crafting-recipe" border="0">
+<img src="https://i.ibb.co.com/LDLPwstx/crafting-recipe.png" alt="crafting-recipe" border="0">
 
 *(Alternatively: `/give @p qualitytools:reforge_table`)*
-</center>
+
 ---
 
 ## How to Use
