@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "qualitytools",
+	"version": "${version}",
+	"name": "Yuxina's Quality Tools",
+	"description": "Added quality to your Tools",
+	"authors": [
+		"Yuxina"
+	],
+	"contact": {
+		"homepage": "https://github.com/iseizuu/Quality-Tools",
+		"sources": "https://github.com/iseizuu/Quality-Tools/releases"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/qualitytools/icon.png",
+	"languageAdapters": {},
+	"environment": "*",
+	"entrypoints": {
+		"main": ["com.qualitytools.Qualitytools"],
+		"client": [
+			"com.qualitytools.QualitytoolsClient"
+		]
+	},
+	"mixins": [
+		"qualitytools.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.2",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "qualitytools",
+  "key": {
+    "i": "minecraft:iron_ingot",
+    "a": "minecraft:anvil",
+    "p": "#minecraft:planks"
+  },
+  "pattern": [
+    "iai",
+    "ipi"
+  ],
+  "result": {
+    "id": "qualitytools:reforge_table",
+    "count": 1
+  }
+}

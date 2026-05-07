@@ -1,0 +1,31 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_iron_ingot": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["minecraft:iron_ingot"]
+          }
+        ]
+      }
+    },
+    "has_anvil": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["minecraft:anvil"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["has_iron_ingot", "has_anvil"]
+  ],
+  "rewards": {
+    "recipes": ["qualitytools:reforge_table"]
+  }
+}

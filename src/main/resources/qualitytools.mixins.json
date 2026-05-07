@@ -1,0 +1,9 @@
+{
+	"required": true,
+	"package": "com.qualitytools.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"ItemStackMixin",
+		"ItemStackTooltipMixin"
+	]
+}

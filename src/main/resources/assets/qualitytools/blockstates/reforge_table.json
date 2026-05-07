@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "qualitytools:block/reforge_table"
+    }
+  }
+}
