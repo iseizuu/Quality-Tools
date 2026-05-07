@@ -26,6 +26,16 @@ public class Qualitytools implements ModInitializer {
 		ModPackets.registerPayload();
 		ModPackets.registerReceiver();
 
-		LOGGER.info("Loaded!");
+		Qualitytools.LOGGER.info("╔════════════════════════════╗");
+		Qualitytools.LOGGER.info("║  _____   ______            ║");
+		Qualitytools.LOGGER.info("║ /\\  __`\\/\\__  _\\           ║");
+		Qualitytools.LOGGER.info("║ \\ \\ \\/\\ \\/_/\\ \\/           ║");
+		Qualitytools.LOGGER.info("║  \\ \\ \\ \\ \\ \\ \\ \\           ║");
+		Qualitytools.LOGGER.info("║   \\ \\ \\'\\ \\ \\ \\ \\          ║");
+		Qualitytools.LOGGER.info("║    \\ \\___\\_\\ \\ \\_\\         ║");
+		Qualitytools.LOGGER.info("║     \\/__//_/  \\/_/         ║");
+		Qualitytools.LOGGER.info("║                            ║");
+		Qualitytools.LOGGER.info("║  QualityTools  		    ║");
+		Qualitytools.LOGGER.info("╚════════════════════════════╝");
 	}
 }

@@ -39,7 +39,7 @@ public class ModPackets {
                 ReforgePayload.CODEC
         );
 
-        Qualitytools.LOGGER.info("Payload registered");
+        Qualitytools.LOGGER.info("[QualityTools] Payload registered");
     }
 
     // SERVER RECEIVER ONLY

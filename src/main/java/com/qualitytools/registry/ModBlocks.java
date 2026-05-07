@@ -48,6 +48,6 @@ public class ModBlocks {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL)
                 .register(entries -> entries.add(REFORGE_TABLE));
 
-        Qualitytools.LOGGER.info("Reforge Block registered");
+        Qualitytools.LOGGER.info("[QualityTools] Reforge Block registered");
     }
 }

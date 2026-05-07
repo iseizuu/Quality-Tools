@@ -2,6 +2,7 @@ package com.qualitytools.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.qualitytools.config.ConfigManager;
+import com.qualitytools.quality.WeaponQuality;
 import com.qualitytools.quality.WeaponQualityHelper;
 import net.minecraft.command.permission.PermissionLevel;
 import net.minecraft.server.command.CommandManager;
@@ -27,6 +28,11 @@ public class QualityToolsCommand {
                                                 var stack = player.getInventory().getStack(i);
                                                 if (!stack.isEmpty()) {
                                                     WeaponQualityHelper.resetBaseDamage(stack);
+
+                                                    if (!WeaponQualityHelper.hasQuality(stack)) {
+                                                        WeaponQuality quality = WeaponQualityHelper.getQuality(stack);
+                                                        WeaponQualityHelper.rebakeMultiplier(stack, quality);
+                                                    }
                                                 }
                                             }
                                         }

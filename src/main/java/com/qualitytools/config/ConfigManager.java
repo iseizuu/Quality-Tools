@@ -31,7 +31,7 @@ public class ConfigManager {
                 save();
                 Messages = "Config created";
                 isSuccess = true;
-                Qualitytools.LOGGER.info("Config created: {}", CONFIG_PATH);
+                Qualitytools.LOGGER.info("[QualityTools] Config created: {}", CONFIG_PATH);
                 return;
             }
 
@@ -44,7 +44,7 @@ public class ConfigManager {
             if (loaded == null) {
                 Messages = "❌ Config file is empty or invalid JSON!";
                 isSuccess = false;
-                Qualitytools.LOGGER.error("❌ Config file is empty or invalid JSON!");
+                Qualitytools.LOGGER.error("[QualityTools] ❌ Config file is empty or invalid JSON!");
                 return;
             }
 
@@ -52,21 +52,21 @@ public class ConfigManager {
             if (!Registries.ITEM.containsId(itemId)) {
                 Messages = "❌ Invalid forgeMaterial: '" + loaded.forgeMaterial + "'";
                 isSuccess = false;
-                Qualitytools.LOGGER.error("❌ Invalid forgeMaterial: '{}'", loaded.forgeMaterial);
+                Qualitytools.LOGGER.error("[QualityTools] ❌ Invalid forgeMaterial: '{}'", loaded.forgeMaterial);
                 return;
             }
 
             if (loaded.forgeCost <= 0) {
                 Messages = "❌ Invalid forgeCost: must greater than 0!";
                 isSuccess = false;
-                Qualitytools.LOGGER.error("❌ Invalid forgeCost: must greater than 0!");
+                Qualitytools.LOGGER.error("[QualityTools] ❌ Invalid forgeCost: must greater than 0!");
                 return;
             }
 
             if (loaded.qualities == null || loaded.qualities.isEmpty()) {
                 Messages = "❌ qualities config is empty";
                 isSuccess = false;
-                Qualitytools.LOGGER.error("❌ qualities config is empty");
+                Qualitytools.LOGGER.error("[QualityTools] ❌ qualities config is empty");
                 loaded.qualities = ModConfig.defaultQualities();
             }
 
@@ -77,21 +77,21 @@ public class ConfigManager {
                 } catch (IllegalArgumentException e) {
                     Messages = "❌ Invalid quality name: '" + name + "' —  AWFUL/TRASH/FINE/GREAT/LEGENDARY/MYTHIC";
                     isSuccess = false;
-                    Qualitytools.LOGGER.error("❌ Invalid quality name: '{}' —  AWFUL/TRASH/FINE/GREAT/LEGENDARY/MYTHIC", name);
-                    Qualitytools.LOGGER.error("⚠️ Config NOT applied.");
+                    Qualitytools.LOGGER.error("[QualityTools] ❌ Invalid quality name: '{}' —  AWFUL/TRASH/FINE/GREAT/LEGENDARY/MYTHIC", name);
+                    Qualitytools.LOGGER.error("[QualityTools] ⚠️ Config NOT applied.");
                     return;
                 }
                 ModConfig.QualityConfig qc = loaded.qualities.get(name);
                 if (qc.weight <= 0) {
                     Messages = "❌ Weight for '" + name + "' should greater than 0!";
                     isSuccess = false;
-                    Qualitytools.LOGGER.error("❌ Weight for '{}' should greater than 0!", name);
+                    Qualitytools.LOGGER.error("[QualityTools] ❌ Weight for '{}' should greater than 0!", name);
                     return;
                 }
                 if (qc.damageMultiplier <= 0) {
                     Messages = "❌ damageMultiplier should '" + name + "' greater than > 0!";
                     isSuccess = false;
-                    Qualitytools.LOGGER.error("❌ damageMultiplier should '{}' greater than > 0!", name);
+                    Qualitytools.LOGGER.error("[QualityTools] ❌ damageMultiplier should '{}' greater than > 0!", name);
                     return;
                 }
             }
@@ -101,21 +101,21 @@ public class ConfigManager {
                     + config.forgeMaterial + ", Cost: " + config.forgeCost;
             isSuccess = true;
 
-            Qualitytools.LOGGER.info("✅ Config loaded! Material: {}, Cost: {}", config.forgeMaterial, config.forgeCost);
+            Qualitytools.LOGGER.info("[QualityTools] ✅ Config loaded! Material: {}, Cost: {}", config.forgeMaterial, config.forgeCost);
 
         } catch (Exception e) {
             Messages = "❌ Failed to load config, check console";
             isSuccess = false;
-            Qualitytools.LOGGER.error("❌ Failed to load config: {}", e.getMessage());
+            Qualitytools.LOGGER.error("[QualityTools] ❌ Failed to load config: {}", e.getMessage());
         }
     }
 
     public static void save() {
         try (Writer writer = Files.newBufferedWriter(CONFIG_PATH)) {
             GSON.toJson(config, writer);
-            Qualitytools.LOGGER.info("Config saved!");
+            Qualitytools.LOGGER.info("[QualityTools] Config saved!");
         } catch (Exception e) {
-            Qualitytools.LOGGER.error("❌ Failed to save config: {}", e.getMessage());
+            Qualitytools.LOGGER.error("[QualityTools] ❌ Failed to save config: {}", e.getMessage());
         }
     }
 

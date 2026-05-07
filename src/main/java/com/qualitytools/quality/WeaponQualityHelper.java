@@ -113,6 +113,16 @@ public class WeaponQualityHelper {
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
     }
 
+    public static void rebakeMultiplier(ItemStack stack, WeaponQuality quality) {
+        NbtComponent comp = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
+        NbtCompound nbt = comp.copyNbt();
+
+        nbt.putFloat(BAKED_MULTIPLIER_KEY, quality.getDamageMultiplier());
+        nbt.putFloat(BAKED_DURABILITY_KEY, quality.getDurabilityMultiplier());
+
+        stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
+    }
+
     private static @NonNull List<AttributeModifiersComponent.Entry> getEntries(AttributeModifiersComponent attr, double base) {
         List<AttributeModifiersComponent.Entry> reset = new ArrayList<>();
         for (AttributeModifiersComponent.Entry entry : attr.modifiers()) {
