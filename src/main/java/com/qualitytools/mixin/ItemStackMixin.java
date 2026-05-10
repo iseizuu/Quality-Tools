@@ -1,16 +1,12 @@
 package com.qualitytools.mixin;
 
-import com.qualitytools.quality.WeaponQuality;
 import com.qualitytools.quality.WeaponQualityHelper;
 
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifiersComponent;
-import net.minecraft.component.type.AttributeModifiersComponent.Entry;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -20,93 +16,71 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.Random;
 
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
 
-    @Unique
-    private static final String BASE_DAMAGE_KEY = "base_damage";
+    @Unique private static final Random RANDOM = new Random();
+
+    @Unique private static final Set<ItemStack> NON_WEAPON_CACHE =
+            Collections.newSetFromMap(new WeakHashMap<>());
 
     @Inject(method = "inventoryTick", at = @At("HEAD"))
-    private void qualitytools$applyQuality(World world, Entity entity, EquipmentSlot slot, CallbackInfo ci) {
+    private void qualitytools$assignQuality(World world, Entity entity, EquipmentSlot slot, CallbackInfo ci) {
+        if (world.isClient()) return;
 
         ItemStack stack = (ItemStack)(Object)this;
-
-        if (world.isClient()) return;
         if (stack.isEmpty()) return;
+        if (WeaponQualityHelper.hasQuality(stack)) return;
+        if (NON_WEAPON_CACHE.contains(stack)) return;
 
         AttributeModifiersComponent attr = stack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
-        if (attr == null) return;
-
-        boolean isWeapon = attr.modifiers().stream().anyMatch(mod ->
-                mod.attribute().equals(EntityAttributes.ATTACK_DAMAGE)
-        );
-        if (!isWeapon) return;
-
-        if (WeaponQualityHelper.hasQuality(stack)) {
-            WeaponQuality quality = WeaponQualityHelper.getRandomQuality(new Random());
-            WeaponQualityHelper.setQuality(stack, quality);
+        if (attr == null) {
+            NON_WEAPON_CACHE.add(stack);
+            return;
         }
 
-        WeaponQuality quality = WeaponQualityHelper.getQuality(stack);
+        boolean isWeapon = attr.modifiers().stream()
+                .anyMatch(mod -> mod.attribute().equals(EntityAttributes.ATTACK_DAMAGE));
 
-        NbtComponent comp = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
-        var nbt = comp.copyNbt();
-
-        if (nbt.contains(BASE_DAMAGE_KEY)) return;
-
-        List<Entry> newModifiers = new ArrayList<>();
-
-        for (Entry entry : attr.modifiers()) {
-            if (entry.attribute().equals(EntityAttributes.ATTACK_DAMAGE)) {
-
-                double base = entry.modifier().value();
-                nbt.putDouble(BASE_DAMAGE_KEY, base);
-
-                double scaled = Math.round(base * quality.getDamageMultiplier() * 10.0) / 10.0;
-
-                EntityAttributeModifier newMod = new EntityAttributeModifier(
-                        entry.modifier().id(),
-                        scaled,
-                        entry.modifier().operation()
-                );
-                newModifiers.add(new Entry(entry.attribute(), newMod, entry.slot()));
-
-            } else {
-                newModifiers.add(entry);
-            }
+        if (!isWeapon) {
+            NON_WEAPON_CACHE.add(stack);
+            return;
         }
 
-        stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
-        stack.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, new AttributeModifiersComponent(newModifiers));
+        WeaponQualityHelper.setQuality(stack, WeaponQualityHelper.getRandomQuality(RANDOM));
+        System.out.println("[QualityTools] Assigned quality to: " + stack.getItem());
     }
 
     @Inject(method = "setDamage", at = @At("HEAD"), cancellable = true)
     private void qualitytools$modifyDurability(int damage, CallbackInfo ci) {
-
         ItemStack stack = (ItemStack)(Object)this;
 
         if (stack.isEmpty()) return;
         if (WeaponQualityHelper.hasQuality(stack)) return;
+        if (NON_WEAPON_CACHE.contains(stack)) return;
 
         AttributeModifiersComponent attr = stack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
         if (attr == null) return;
-        boolean isWeapon = attr.modifiers().stream().anyMatch(mod ->
-                mod.attribute().equals(EntityAttributes.ATTACK_DAMAGE)
-        );
-        if (!isWeapon) return;
+
+        boolean isWeapon = attr.modifiers().stream()
+                .anyMatch(mod -> mod.attribute().equals(EntityAttributes.ATTACK_DAMAGE));
+        if (!isWeapon) {
+            NON_WEAPON_CACHE.add(stack);
+            return;
+        }
 
         int currentDamage = stack.getDamage();
         if (damage <= currentDamage) return;
 
         int delta = damage - currentDamage;
+        float durabilityMult = WeaponQualityHelper.getQuality(stack).getDurabilityMultiplier();
+
         int scaledDelta;
-
-        float durabilityMult = WeaponQualityHelper.getBakedDurabilityMultiplier(stack);
-
         if (durabilityMult >= 1.0f) {
             scaledDelta = Math.max(1, Math.round(delta * durabilityMult));
         } else {
@@ -118,11 +92,10 @@ public class ItemStackMixin {
             return;
         }
 
-        int newDamage = currentDamage + scaledDelta;
         ci.cancel();
         stack.set(
-                net.minecraft.component.DataComponentTypes.DAMAGE,
-                Math.min(newDamage, stack.getMaxDamage())
+                DataComponentTypes.DAMAGE,
+                Math.min(currentDamage + scaledDelta, stack.getMaxDamage())
         );
     }
 }

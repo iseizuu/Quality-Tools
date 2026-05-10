@@ -123,7 +123,6 @@ public class ReforgeScreenHandler extends ScreenHandler {
         //  REROLL QUALITY
         WeaponQuality newQuality = WeaponQualityHelper.getRandomQuality(new Random());
         WeaponQualityHelper.setQuality(stack, newQuality);
-        WeaponQualityHelper.resetBaseDamage(stack);
 
         player.sendMessage(
                 Text.literal("[Quality Tools] ")
@@ -133,10 +132,11 @@ public class ReforgeScreenHandler extends ScreenHandler {
                 false
         );
 
+        // SOUND EFFECT
         player.getEntityWorld().playSound(
                 null,
                 player.getBlockPos(),
-                newQuality.name().equals("MYTHIC") ? SoundEvents.ENTITY_PLAYER_LEVELUP : SoundEvents.BLOCK_ANVIL_USE,
+                newQuality.name().equals("MYTHIC") ? SoundEvents.UI_TOAST_CHALLENGE_COMPLETE : SoundEvents.BLOCK_ANVIL_USE,
                 SoundCategory.PLAYERS,
                 1.0f,
                 1.0f

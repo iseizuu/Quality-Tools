@@ -26,32 +26,26 @@ public class ItemStackTooltipMixin {
 
     @Inject(method = "getTooltip", at = @At("RETURN"))
     private void qualitytools$addTooltip(
-            Item.TooltipContext context, @Nullable PlayerEntity player, TooltipType type, CallbackInfoReturnable<List<Text>> cir) {
+            Item.TooltipContext context, @Nullable PlayerEntity player,
+            TooltipType type, CallbackInfoReturnable<List<Text>> cir) {
 
         ItemStack stack = (ItemStack)(Object)this;
 
         AttributeModifiersComponent attr = stack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
         if (attr == null) return;
 
-        boolean isWeapon = attr.modifiers().stream().anyMatch(mod ->
-                mod.attribute().equals(EntityAttributes.ATTACK_DAMAGE)
-        );
-
+        boolean isWeapon = attr.modifiers().stream()
+                .anyMatch(mod -> mod.attribute().equals(EntityAttributes.ATTACK_DAMAGE));
         if (!isWeapon) return;
-        if (WeaponQualityHelper.hasQuality(stack)) return;
+        if (!WeaponQualityHelper.hasQuality(stack)) return;
 
         WeaponQuality quality = WeaponQualityHelper.getQuality(stack);
+
         List<Text> tooltip = cir.getReturnValue();
-
-        float bakedMultiplier = WeaponQualityHelper.getBakedDamageMultiplier(stack);
-
         tooltip.add(Text.literal("Yuxina's Quality Tools")
                 .formatted(Formatting.BLUE, Formatting.ITALIC));
         tooltip.add(Text.literal("✦ Quality: ")
                 .formatted(Formatting.WHITE)
                 .append(Text.literal(quality.name()).formatted(quality.color)));
-        tooltip.add(Text.literal("✦ Damage: ")
-                .formatted(Formatting.WHITE)
-                .append(Text.literal("x" + bakedMultiplier).formatted(quality.color)));
     }
 }
