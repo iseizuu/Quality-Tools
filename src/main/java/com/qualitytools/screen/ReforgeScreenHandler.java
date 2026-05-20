@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
@@ -25,6 +24,7 @@ import net.minecraft.util.Identifier;
 import com.qualitytools.config.ConfigManager;
 import net.minecraft.item.Item;
 
+import java.util.Objects;
 import java.util.Random;
 
 public class ReforgeScreenHandler extends ScreenHandler {
@@ -131,6 +131,21 @@ public class ReforgeScreenHandler extends ScreenHandler {
                         .append(Text.literal(newQuality.name()).formatted(newQuality.color).formatted(Formatting.BOLD)),
                 false
         );
+
+        if (newQuality == WeaponQuality.MYTHIC && player instanceof ServerPlayerEntity serverPlayer) {
+            net.minecraft.advancement.AdvancementEntry advancement = Objects.requireNonNull(serverPlayer.getEntityWorld().getServer())
+                    .getAdvancementLoader()
+                    .get(net.minecraft.util.Identifier.of("qualitytools", "mythic_quality"));
+
+            if (advancement != null) {
+                net.minecraft.advancement.PlayerAdvancementTracker tracker =
+                        serverPlayer.getAdvancementTracker();
+
+                if (!tracker.getProgress(advancement).isDone()) {
+                    tracker.grantCriterion(advancement, "get_mythic");
+                }
+            }
+        }
 
         // SOUND EFFECT
         player.getEntityWorld().playSound(

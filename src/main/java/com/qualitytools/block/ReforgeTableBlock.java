@@ -24,6 +24,23 @@ public class ReforgeTableBlock extends Block {
             return net.minecraft.util.ActionResult.SUCCESS;
         }
 
+        if (player instanceof net.minecraft.server.network.ServerPlayerEntity serverPlayer) {
+            assert world
+                    .getServer() != null;
+            net.minecraft.advancement.AdvancementEntry advancement = world
+                    .getServer()
+                    .getAdvancementLoader()
+                    .get(net.minecraft.util.Identifier.of("qualitytools", "use_reforge_table"));
+
+            if (advancement != null) {
+                net.minecraft.advancement.PlayerAdvancementTracker tracker =
+                        serverPlayer.getAdvancementTracker();
+                if (!tracker.getProgress(advancement).isDone()) {
+                    tracker.grantCriterion(advancement, "use_reforge_table");
+                }
+            }
+        }
+
         player.openHandledScreen(
                 new net.minecraft.screen.SimpleNamedScreenHandlerFactory(
                         (syncId, inventory, p) ->

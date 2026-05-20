@@ -53,7 +53,6 @@ public class ItemStackMixin {
         }
 
         WeaponQualityHelper.setQuality(stack, WeaponQualityHelper.getRandomQuality(RANDOM));
-        System.out.println("[QualityTools] Assigned quality to: " + stack.getItem());
     }
 
     @Inject(method = "setDamage", at = @At("HEAD"), cancellable = true)

@@ -11,8 +11,6 @@ public class WeaponQualityHelper {
 
     private static final String NBT_KEY = "quality";
 
-    // ── Random quality roll ────────────────────────────────────────────────────
-
     public static WeaponQuality getRandomQuality(Random random) {
         int totalWeight = 0;
         for (WeaponQuality q : WeaponQuality.values()) {
@@ -26,13 +24,6 @@ public class WeaponQualityHelper {
         return WeaponQuality.FINE;
     }
 
-    // ── Set / Get quality from NBT ─────────────────────────────────────────────
-
-    /**
-     * Simpan quality ke NBT item.
-     * Hanya simpan nama quality — TIDAK ada baked values.
-     * Multiplier selalu dibaca runtime dari config.
-     */
     public static void setQuality(ItemStack stack, WeaponQuality quality) {
         NbtComponent comp = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
         NbtCompound nbt = comp.copyNbt();
