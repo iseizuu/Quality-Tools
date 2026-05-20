@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "qualitytools:reforge_table"
+    },
+    "title": {
+      "translate": "advancement.qualitytools.use_reforge_table.title"
+    },
+    "description": {
+      "translate": "advancement.qualitytools.use_reforge_table.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "qualitytools:root",
+  "criteria": {
+    "use_reforge_table": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

@@ -1,5 +1,11 @@
 {
   "block.qualitytools.reforge_table": "§bReforge Table",
   "item.qualitytools.reforge_table": "§bReforge Table",
-  "container.qualitytools.reforge": "Reforge"
+  "container.qualitytools.reforge": "Reforge",
+  "advancement.qualitytools.root.title": "Quality Tools",
+  "advancement.qualitytools.root.desc": "Yuxina's Quality Tools",
+  "advancement.qualitytools.use_reforge_table.title": "What Is This Tool For?",
+  "advancement.qualitytools.use_reforge_table.desc": "Use a Reforge Table for the first time.",
+  "advancement.qualitytools.mythic_quality.title": "Whoa, Is This Rare?",
+  "advancement.qualitytools.mythic_quality.desc": "Obtain a weapon with Mythic quality from the Reforge Table."
 }

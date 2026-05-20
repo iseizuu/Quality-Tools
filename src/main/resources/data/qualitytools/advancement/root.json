@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "qualitytools:reforge_table"
+    },
+    "title": {
+      "translate": "advancement.qualitytools.root.title"
+    },
+    "description": {
+      "translate": "advancement.qualitytools.root.desc"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false,
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
+  },
+  "criteria": {
+    "root": {
+      "trigger": "minecraft:tick"
+    }
+  }
+}
